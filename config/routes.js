@@ -205,4 +205,5 @@ module.exports.routes = {
 
    // Cru Global DataDog /monitors/lb
    "get /monitors/lb": "SiteController.dataDog",
+   "get /todo/task": "todo/get-tasks",
 };

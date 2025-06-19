@@ -4,7 +4,7 @@ const MetricManager = require("../../lib/metricManager");
  * metric_manager/metrics-information.js
  * @apiDescription Request data loggings in Prometheus format.
  *
- * @api {get} //metrics
+ * @api {get} /metrics Metrics
  * @apiSuccess (200) {string} data log in Prometheus format
  */
 

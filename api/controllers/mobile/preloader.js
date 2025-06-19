@@ -2,7 +2,7 @@
  * mobile/preloader.js
  * @apiDescription Respond with the preloader of the Mobile PWA
  *
- * @api {get} /mobile/preloader/:tenantID/:appID
+ * @api {get} /mobile/preloader/:tenantID/:appID Preloader
  * @apiParam {uuid} tenantID
  * @apiParam {uuid} appID
  * @apiGroup Mobile

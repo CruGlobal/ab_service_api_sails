@@ -2,7 +2,7 @@
  * mobile/app.js
  * @apiDescription Respond with the index.html of the Mobile PWA
  *
- * @api {get} /mobile/app/:tenantID/:appID
+ * @api {get} /mobile/app/:tenantID/:appID App
  * @apiParam {string} tenantID
  * @apiParam {string} appID
  * @apiGroup Mobile

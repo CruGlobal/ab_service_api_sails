@@ -39,6 +39,8 @@ ___
 
 ## Reference
 <a name="top"></a>
+- [/home/digierve/abDev/developer/api_sails/metric_manager/metrics-information.js](#/home/digierve/abDev/developer/api_sails/metric_manager/metrics-information.js)
+  - [Metrics](#Metrics)
 - [AppBuilder](#AppBuilder)
   - [CSV Export](#CSV-Export)
   - [Model Count](#Model-Count)
@@ -48,6 +50,7 @@ ___
   - [Model Find](#Model-Find)
   - [Model Update](#Model-Update)
   - [Model Update Batch](#Model-Update-Batch)
+  - [Request DB Information of an object](#Request-DB-Information-of-an-object)
 - [Auth](#Auth)
   - [Login](#Login)
   - [Login Start](#Login-Start)
@@ -68,6 +71,7 @@ ___
   - [Export All](#Export-All)
   - [Export App](#Export-App)
   - [Import](#Import)
+  - [Mobile App definitions](#Mobile-App-definitions)
   - [Register](#Register)
   - [Update](#Update)
   - [Update App accross Tenant](#Update-App-accross-Tenant)
@@ -83,6 +87,7 @@ ___
   - [App](#App)
   - [Favicon](#Favicon)
   - [Manifest](#Manifest)
+  - [Preloader](#Preloader)
   - [QR](#QR)
   - [Version](#Version)
 - [Multilingual](#Multilingual)
@@ -108,9 +113,31 @@ ___
 - [Test](#Test)
   - [Import](#Import)
   - [Reset](#Reset)
+- [Todo](#Todo)
+  - [Get all tasks](#Get-all-tasks)
 
 ___
 
+
+<a name='/home/digierve/abDev/developer/api_sails/metric_manager/metrics-information.js'></a> 
+## /home/digierve/abDev/developer/api_sails/metric_manager/metrics-information.js
+
+
+  
+<a name='Metrics'></a>
+### Metrics - `GET` /metrics
+[Back to top](#top)
+
+
+<p>Request data loggings in Prometheus format.</p>
+
+#### Responses
+
+##### Success response - `200`
+
+| Name     | Type       | Description                           |
+|----------|------------|---------------------------------------|
+| data | `string` | <p>log in Prometheus format</p> |
 
 <a name='AppBuilder'></a> 
 ## AppBuilder
@@ -237,7 +264,6 @@ ___
 |----------|------------|-------------|-------------------------|
 | objID | `string` | route | <p>The uuid of the ABObject</p> |
 | where | `object` | query | **optional** <p>filter conditions</p> |
-| sort | `array` | query | **optional** <p>specify the fields used for sorting <code>[ { key: field.id, dir:[&quot;ASC&quot;, &quot;DESC&quot;]}, ... ]</code></p> |
 | populate | `boolean\|array` | query | **optional** <p>return values with their connections populated?</p> |
 | offset | `number` | query | **optional** <p>the number of entries to skip.</p> |
 | limit | `number` | query | **optional** <p>the number of return.</p> |
@@ -302,6 +328,18 @@ ___
 |----------|------------|---------------------------------------|
 | status | `string` | <p><code>&quot;success&quot;</code></p> |
 | data | `boolean` | <p><code>true</code></p> |
+  
+<a name='Request-DB-Information-of-an-object'></a>
+### Request DB Information of an object - `GET` /definition/info/object/:ID
+[Back to top](#top)
+
+
+**Permission:** `User`
+\- Any authenticated user
+#### Parameters
+| Name     | Type       | Location    |  Description            |
+|----------|------------|-------------|-------------------------|
+| ID | `string` | route |  |
 
 <a name='Auth'></a> 
 ## Auth
@@ -666,6 +704,21 @@ ___
 | data | `object` |  |
 | data.done | `boolean` | <p><code>true</code></p> |
   
+<a name='Mobile-App-definitions'></a>
+### Mobile App definitions - `GET` /mobile/definitions/:appID
+[Back to top](#top)
+
+
+**Permission:** `none`
+
+#### Responses
+
+##### Success response - `200`
+
+| Name     | Type       | Description                           |
+|----------|------------|---------------------------------------|
+| definitions | `text/javascript` | <p>script to add the app definitions</p> |
+  
 <a name='Register'></a>
 ### Register - `POST` /definition/register
 [Back to top](#top)
@@ -878,7 +931,7 @@ ___
 
   
 <a name='App'></a>
-### App - `GET` /mobile/app/:appID
+### App - `GET` /mobile/app/:tenantID/:appID
 [Back to top](#top)
 
 
@@ -889,6 +942,7 @@ ___
 #### Parameters
 | Name     | Type       | Location    |  Description            |
 |----------|------------|-------------|-------------------------|
+| tenantID | `string` | route |  |
 | appID | `string` | route |  |
 #### Responses
 
@@ -924,6 +978,28 @@ ___
 
 **Permission:** `None`
 
+#### Responses
+
+##### Success response - `200`
+
+| Name     | Type       | Description                           |
+|----------|------------|---------------------------------------|
+| html | `HTML` |  |
+  
+<a name='Preloader'></a>
+### Preloader - `GET` /mobile/preloader/:tenantID/:appID
+[Back to top](#top)
+
+
+<p>Respond with the preloader of the Mobile PWA</p>
+
+**Permission:** `None`
+
+#### Parameters
+| Name     | Type       | Location    |  Description            |
+|----------|------------|-------------|-------------------------|
+| tenantID | `uuid` | route |  |
+| appID | `uuid` | route |  |
 #### Responses
 
 ##### Success response - `200`
@@ -1357,4 +1433,24 @@ ___
 | status | `string` | <p><code>&quot;success&quot;</code></p> |
 | data | `object` |  |
 | data.done | `boolean` | <p><code>true</code></p> |
+
+<a name='Todo'></a> 
+## Todo
+
+
+  
+<a name='Get-all-tasks'></a>
+### Get all tasks - `GET` /todo/task
+[Back to top](#top)
+
+
+**Permission:** `User`
+\- Any authenticated user
+#### Responses
+
+##### Success response - `200`
+
+| Name     | Type       | Description                           |
+|----------|------------|---------------------------------------|
+| tasks | `application/json` | <p>a list of tasks</p> |
 
