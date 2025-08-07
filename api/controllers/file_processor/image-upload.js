@@ -46,17 +46,12 @@ module.exports = function (req, res) {
 
    const isWebix = req.ab.param("isWebix") || "??";
 
-   var fileEntry;
-   // {obj}
-   // this will contain all the uploaded information about our incoming file
-
-   var serviceResponse;
-   // {obj}
-   // our response back from the file_processor.file-upload service
+   var fileEntries = []; // 修改：存储所有上传的文件信息
+   var serviceResponses = []; // 修改：存储所有服务的响应
 
    async.series(
       [
-         // 1) finish downloading the file
+         // 1) finish downloading the files
          (next) => {
             // store the files in our TEMP path
             var dirname = path.join(
@@ -64,8 +59,10 @@ module.exports = function (req, res) {
                sails.config.file_processor.uploadPath || "tmp"
             );
             var maxBytes = sails.config.file_processor.maxBytes || 10000000;
+            var maxFiles = sails.config.file_processor.maxFiles || 10; // 添加最大文件数限制
+            
             req.file("image").upload(
-               { dirname, maxBytes },
+               { dirname, maxBytes, maxFiles }, // 添加 maxFiles 参数
                function (err, list) {
                   if (err) {
                      req.ab.notify.developer(err, {
@@ -74,19 +71,19 @@ module.exports = function (req, res) {
                         isWebix,
                         dirname,
                         maxBytes,
+                        maxFiles,
                      });
                      err.code = 500;
                      next(err);
                   } else {
-                     fileEntry = list[0]; // info about file
-                     req.ab.log("... fileEntry:", fileEntry);
+                     fileEntries = list; // 保存所有文件信息
+                     req.ab.log("... fileEntries count:", fileEntries.length);
 
-                     if (fileEntry) {
-                        // fileRef = fileEntry.fd; // full path to file
+                     if (fileEntries.length > 0) {
                         next();
                      } else {
                         var err2 = new Error(
-                           "No file uploaded for parameter [file]"
+                           "No files uploaded for parameter [file]"
                         );
                         err2.code = 422;
                         next(err2);
@@ -96,80 +93,72 @@ module.exports = function (req, res) {
             );
          },
 
-         /*
- *  Check to see if url params are ready before file.upload()
- *
-         // 2) read in the parameters
+         // 2) 处理所有文件
          (next) => {
-            params.forEach(function (p) {
-               options[p] = req.param(p) || "??";
-            });
+            // Process all files in parallel
+            async.mapLimit(fileEntries, 5, (fileEntry, callback) => {
+               var jobData = {
+                  name: fileEntry.fd.split(path.sep).pop(),
+                  size: fileEntry.size,
+                  type: fileEntry.type,
+                  fileName: fileEntry.filename,
+                  uploadedBy: req.ab.userDefaults().username,
+                  convertToExtensions: ["webp"],
+               };
 
-            var missingParams = [];
-            requiredParams.forEach(function (r) {
-               if (options[r] == "??") {
-                  missingParams.push(r);
-               }
-            });
-
-            if (missingParams.length > 0) {
-               req.ab.log("... missingParams:", missingParams);
-               // var error = ADCore.error.fromKey('E_MISSINGPARAM');
-               var error = new Error("Missing Parameter");
-               error.key = "E_MISSINGPARAM";
-               error.missingParams = missingParams;
-               error.code = 422;
-               next(error);
-               return;
-            }
-
-            next();
-         },
-*/
-         // 3) pass the job to the client
-         (next) => {
-            var jobData = {
-               name: fileEntry.fd.split(path.sep).pop(),
-               size: fileEntry.size,
-               type: fileEntry.type,
-               fileName: fileEntry.filename,
-               uploadedBy: req.ab.userDefaults().username,
-               convertToExtensions: ["webp"],
-            };
-
-            // pass the request off to the uService:
-            req.ab.serviceRequest(
-               "file_processor.image-upload",
-               jobData,
-               (err, results) => {
-                  serviceResponse = results;
+               // 将请求传递给服务
+               req.ab.serviceRequest(
+                  "file_processor.image-upload",
+                  jobData,
+                  (err, results) => {
+                     if (err) {
+                        callback(err);
+                     } else {
+                        callback(null, results);
+                     }
+                  }
+               );
+            }, (err, results) => {
+               if (err) {
                   next(err);
+               } else {
+                  serviceResponses = results;
+                  next();
                }
-            );
+            });
          },
 
-         // 3) package response to the client
+         // 3) 打包响应给客户端
          (next) => {
-            // simplify response to .uuid only
-            var data = {
-               uuid: serviceResponse.uuid,
+            // 提取所有UUID
+            const uuids = serviceResponses.map(response => response.uuid);
+            
+            // 创建响应数据
+            const data = {
+               uuids: uuids,
+               count: uuids.length
             };
 
-            // if this was a Webix uploader:
+            // 如果是Webix上传器
             if (
                isWebix != "??" &&
                isWebix != "false" &&
                isWebix != false &&
                isWebix != 0
             ) {
-               data.status = "server";
+               // Webix期望每个文件都有状态
+               res.ab.success({
+                  status: "server",
+                  data: data
+               });
+            } else {
+               res.ab.success(data);
             }
-            res.ab.success(data);
             next();
          },
       ],
       (err /*, results */) => {
-         // handle error reporting back to the client
+         // 处理错误报告回客户端
          if (err) {
             req.ab.log("api_sails:file_processor:image-upload: error", err);
             res.ab.error(err);

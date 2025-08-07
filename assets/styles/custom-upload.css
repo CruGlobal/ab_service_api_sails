@@ -1,0 +1,115 @@
+/* Upload area style */
+.image-upload-area {
+   text-align: center;
+   font-size: 30px;
+}
+
+.default-image-holder {
+   position: relative;
+   border: 2px dashed #ccc;
+   border-radius: 8px;
+   padding: 15px;
+   cursor: pointer;
+   transition: all 0.3s;
+}
+
+.default-image-holder.dragover {
+   border-color: #2196F3;
+   background-color: #f0f8ff;
+}
+
+.image-data-field-icon {
+   color: #999;
+}
+
+.image-data-field-icon .upload-text {
+   font-size: 15px;
+   margin-top: 10px;
+}
+
+/* 图片容器 */
+.image-data-field-images {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 8px;
+   margin-top: 15px;
+   justify-content: center;
+}
+
+/* 图片项 */
+.image-data-field-image {
+   position: relative;
+   width: 80px;
+   height: 80px;
+   background-size: contain;
+   background-repeat: no-repeat;
+   background-position: center;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+}
+
+/* 删除按钮 */
+.ab-delete-photo {
+   position: absolute;
+   top: -10px;
+   right: -10px;
+   background: #f44336;
+   color: white;
+   border-radius: 50%;
+   width: 24px;
+   height: 24px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   cursor: pointer;
+   z-index: 10;
+   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.ab-delete-photo:hover {
+   background: #d32f2f;
+}
+
+.ab-delete-photo i {
+   font-size: 14px;
+}
+
+/* 上传状态 */
+.image-upload-status {
+   position: relative;
+   width: 80px;
+   height: 80px;
+   background: #f5f5f5;
+   border: 1px dashed #ccc;
+   border-radius: 4px;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+}
+
+.spinner {
+   width: 30px;
+   height: 30px;
+   border: 3px solid rgba(0,0,0,0.1);
+   border-radius: 50%;
+   border-top-color: #2196F3;
+   animation: spin 1s linear infinite;
+   margin-bottom: 5px;
+}
+
+@keyframes spin {
+   to { transform: rotate(360deg); }
+}
+
+.text {
+   font-size: 12px;
+   color: #666;
+}
+
+.error {
+   color: #f44336;
+   font-size: 12px;
+   text-align: center;
+   padding: 5px;
+}

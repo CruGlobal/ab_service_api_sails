@@ -16,7 +16,7 @@ module.exports.file_processor = {
       "image/webp"
    ],
    
-   // 文件存储策略
+   // File storage strategy
    saveAs: function(file) {
       const uuid = require('uuid').v4();
       const ext = path.extname(file.filename);
