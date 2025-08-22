@@ -46,6 +46,7 @@ var inputParams = {
    // limit: the number or entries to return.
 
    disableMinifyRelation: { optional: true },
+   skipPack: { bool: true, optional: true },
 
    //// For API Object: to pull data from the URL
    isAPI: { optional: true },
@@ -88,10 +89,12 @@ module.exports = function (req, res) {
    let jobData = {
       objectID: req.ab.param("objID"),
       cond: {},
+      skipPack: req.ab.param("skipPack") || false,
    };
 
+   let skipParams = ["objID", "skipPack"];
    Object.keys(inputParams).forEach((f) => {
-      if (f == "objID") return;
+      if (skipParams.indexOf(f) != -1) return;
       var val = req.ab.param(f);
       if (typeof val != "undefined") {
          try {
