@@ -12,6 +12,7 @@
  */
 var inputParams = {
    objID: { string: { uuid: true }, required: true },
+   skipPack: { bool: true, optional: true },
 };
 
 const BroadcastManager = require("../../lib/broadcastManager");
@@ -53,6 +54,7 @@ module.exports = function (req, res) {
       objectID: req.ab.param("objID"),
       values: {},
       // relocate the rest of the params as .values
+      skipPack: req.ab.param("skipPack") || false,
    };
 
    // add in anything else we just want to pass along:

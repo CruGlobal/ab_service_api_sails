@@ -18,6 +18,7 @@ var inputParams = {
    /*    "email": { string:{ email: { allowUnicode: true }}, required:true }   */
    /*                -> NOTE: put .string  before .required                    */
    /*    "param": { required: true } // NOTE: param Joi.any().required();      */
+   skipPack: { bool: true, optional: true },
 };
 
 // make sure our BasePath is created:
@@ -51,6 +52,7 @@ module.exports = function (req, res) {
       objectID: req.ab.param("objID"),
       ID: req.ab.param("ID"),
       values: {},
+      skipPack: req.ab.param("skipPack") || false,
    };
 
    // Now collect any remaining Values and use them for the UPDATE data:
