@@ -1,7 +1,7 @@
 {
   "name": "app",
   "private": true,
-  "version": "2.5.8",
+  "version": "2.6.0",
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
