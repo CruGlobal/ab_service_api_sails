@@ -20,7 +20,7 @@ module.exports = {
     * datastores:
     * Sails style DB connection settings
     */
-   datastores: AB.defaults.datastores(),
+   // datastores: AB.defaults.datastores(),
    /* end datastores */
 
    /**
