@@ -53,8 +53,8 @@ module.exports.session = {
 
    // Use redis in swarm for session store
    adapter: "@sailshq/connect-redis",
-   host: "redis",
-   port: 6379,
-   db: 1,
+   host: process.env.SESSION_REDIS_HOST ?? "redis",
+   port: process.env.SESSION_REDIS_PORT ?? 6379,
+   db: process.env.SESSION_REDIS_DB ?? 1,
    // timeout: 30000,
 };
