@@ -55,6 +55,6 @@ module.exports.session = {
    adapter: "@sailshq/connect-redis",
    host: process.env.SESSION_REDIS_HOST ?? "redis",
    port: process.env.SESSION_REDIS_PORT ?? 6379,
-   db: process.env.SESSION_REDIS_DB ?? 1,
+   db: process.env.SESSION_REDIS_DB_INDEX ?? 1,
    // timeout: 30000,
 };
