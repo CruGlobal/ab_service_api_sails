@@ -21,4 +21,7 @@ RUN npm i -f
 
 ENV NODE_ENV=production
 
+EXPOSE 1337
+EXPOSE 8000-8001
+
 CMD ["node", "--inspect=0.0.0.0:9229", "app_waitMysql.js"]
