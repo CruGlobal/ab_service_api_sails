@@ -141,6 +141,9 @@ module.exports.routes = {
    "post /definition/tenants-update-application":
       "definition_manager/tenants-update-application",
 
+   // Plugin Loading
+   "post /definition/plugin/add": "definition_manager/plugin-add",
+
    // process_manager routes:
    "get /process/inbox": "process_manager/inbox-find",
    "post /process/inbox/register": "process_manager/inbox-register",
