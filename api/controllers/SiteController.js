@@ -835,7 +835,7 @@ async function lookupPluginLinks(req, cond = {}) {
                return;
             }
 
-            plugins = results;
+            pluginLinks = results;
             resolve();
          }
       );
