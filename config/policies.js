@@ -20,6 +20,7 @@ var noAuth = ["abUtils", "telemetry", "authTenant"];
 module.exports.policies = {
    SiteController: {
       favicon: noAuth,
+      datadog: [], // <-- Important: no policy, since this a healthcheck
       // sailsio: noAuth,  // <-- now served by nginx
    },
 

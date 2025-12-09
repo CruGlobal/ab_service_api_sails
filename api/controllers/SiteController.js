@@ -727,32 +727,35 @@ async function lookupMyAppVersion(req) {
    return version;
 }
 
+// TODO: This doesn't work in the ecs environment, needs to be configurable
 async function lookupWebVersion() {
-   return new Promise((resolve, reject) => {
-      http
-         .get("http://web:80/version", (res) => {
-            res.on("readable", () => {
-               const version = res.read()?.toString();
-               resolve(version);
-            });
-         })
-         .on("error", function (e) {
-            reject(e);
-         });
-   });
+   return "ecs";
+   // return new Promise((resolve, reject) => {
+   //    http
+   //       .get("http://web:80/version", (res) => {
+   //          res.on("readable", () => {
+   //             const version = res.read()?.toString();
+   //             resolve(version);
+   //          });
+   //       })
+   //       .on("error", function (e) {
+   //          reject(e);
+   //       });
+   // });
 }
 
 async function lookupHrTeamVersion() {
-   return new Promise((resolve, reject) => {
-      http
-         .get("http://web:80/version_hrteam", (res) => {
-            res.on("readable", () => {
-               const version = res.read()?.toString();
-               resolve(version);
-            });
-         })
-         .on("error", function (e) {
-            reject(e);
-         });
-   });
+   return "ecs";
+   // return new Promise((resolve, reject) => {
+   //    http
+   //       .get("http://web:80/version_hrteam", (res) => {
+   //          res.on("readable", () => {
+   //             const version = res.read()?.toString();
+   //             resolve(version);
+   //          });
+   //       })
+   //       .on("error", function (e) {
+   //          reject(e);
+   //       });
+   // });
 }
