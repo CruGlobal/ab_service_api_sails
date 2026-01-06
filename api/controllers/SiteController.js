@@ -801,26 +801,26 @@ async function lookupMyAppVersion(req) {
    return version;
 }
 
-async function lookupPlugins(req, cond = {}) {
-   let plugins = [];
-   await new Promise((resolve, reject) => {
-      req.ab.serviceRequest(
-         "definition_manager.plugins",
-         { cond },
-         (err, results) => {
-            if (err) {
-               req.ab.log("error:", err);
-               reject(err);
-               return;
-            }
+// async function lookupPlugins(req, cond = {}) {
+//    let plugins = [];
+//    await new Promise((resolve, reject) => {
+//       req.ab.serviceRequest(
+//          "definition_manager.plugins",
+//          { cond },
+//          (err, results) => {
+//             if (err) {
+//                req.ab.log("error:", err);
+//                reject(err);
+//                return;
+//             }
 
-            plugins = results;
-            resolve();
-         }
-      );
-   });
-   return plugins;
-}
+//             plugins = results;
+//             resolve();
+//          }
+//       );
+//    });
+//    return plugins;
+// }
 
 async function lookupPluginLinks(req, cond = {}) {
    let pluginLinks = [];
