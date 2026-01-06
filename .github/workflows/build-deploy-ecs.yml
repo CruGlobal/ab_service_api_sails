@@ -13,7 +13,11 @@ on:
         type: boolean
         description: Deploy image after building?
         required: true
-        default: 'false'
+        default: "false"
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 jobs:
   # Build and push container image to ECR. Builds occur in the project repository.
   build:
