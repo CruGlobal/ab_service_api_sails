@@ -41,11 +41,12 @@ async function Preload() {
    allScripts.push(ScriptLoad("/definition/myapps?v=<%- configMyAppsVersion %>"));
    allScripts.push(ScriptLoad("/settings"));
 
-   let plugins = [ <%- pluginList %> ];
-   plugins.forEach((p) => {
+   let pluginsV0 = [ <%- pluginListV0 %> ];
+   pluginsV0.forEach((p) => {
       allScripts.push(ScriptLoad(p));
    })
 
+   window.__AB_plugins_v1 =  [ <%- pluginsV1 %> ];
 
    await Promise.all(allScripts);
 

@@ -11,6 +11,8 @@ const path = require("node:path");
 
 const { version } = require(path.join(process.cwd(), "package.json"));
 
+// const { access } = require("node:fs/promises");
+
 function UserSimple(req) {
    let sUser = {};
 
@@ -524,6 +526,39 @@ module.exports = {
       // res.ab.error(new Error("no tenant set. Login first."));
    },
 
+   /*
+    * get /plugin/service/:pluginDir/:fileName
+    * return the actual js file for our services to load.
+    */
+   // pluginServiceLoad: async function (req, res) {
+   //    var pluginDir = req.param("pluginDir");
+   //    // {string} should resolve to the filename: {key}.js of the plugin
+   //    // file to load.
+
+   //    var fileName = req.param("fileName");
+   //    // {string} should resolve to the filename: {key}.js of the plugin
+   //    // file to load.
+
+   //    req.ab.log(`/plugin/${pluginDir}/${fileName}`);
+
+   //    let err = access();
+   //    if (key.indexOf("ABDesigner.") == 0) {
+   //       // ABDesigner is our common plugin for all Tenants.
+   //       // We share the same tenant/default/ABDesigner.js file
+   //       return res.redirect(`/assets/tenant/default/${key}`);
+   //    }
+   //    if (tenant != "??") {
+   //       // Other plugins are loaded in reference to the tenant and
+   //       // what they have loaded.
+   //       let pluginSrc = `/assets/tenant/${tenant}/${key}`;
+   //       req.ab.log(`loading plugin: ${pluginSrc}`);
+   //       return res.redirect(pluginSrc);
+   //    }
+   //    req.ab.log(`no tenant set when requesting plugin ${key}`);
+   //    res.send("plugin request: login first");
+   //    // res.ab.error(new Error("no tenant set. Login first."));
+   // },
+
    preloader: async function (req, res) {
       let tenantID = req.ab.tenantSet() //Tenant set from policies
          ? req.ab.tenantID
@@ -572,20 +607,58 @@ module.exports = {
 
       let configUserRealData = req.ab.isSwitcherood() ? req.ab.userReal : 0;
 
-      await Promise.all(allLookups);
+      let pluginsV1 = [];
+      allLookups.push(
+         lookupPluginLinks(req, {
+            platform: "web",
+            type: { "!=": "properties" },
+         }).then((results) => {
+            pluginsV1 = pluginsV1.concat(results);
+         })
+      );
 
-      // @TODO: we still haven't setup a way to assign Plugins to Roles.
-      // So for now we are manually adding ABDesigner.js.
-      // only add if they have 1 of our Builder Related Roles:
-
-      let pluginList = [];
+      let isBuilder = false;
       const builderRoles = [
          "6cc04894-a61b-4fb5-b3e5-b8c3f78bd331",
          "e1be4d22-1d00-4c34-b205-ef84b8334b19",
       ];
       let roles = req.ab.user?.SITE_ROLE ?? [];
       if (roles.filter((r) => builderRoles.indexOf(r.uuid) > -1).length > 0) {
-         pluginList.push(
+         isBuilder = true;
+      }
+
+      if (isBuilder) {
+         allLookups.push(
+            lookupPluginLinks(req, {
+               platform: "web",
+               type: "properties",
+            }).then((results) => {
+               pluginsV1 = pluginsV1.concat(results);
+            })
+         );
+      }
+
+      await Promise.all(allLookups);
+
+      // format pluginsV1 for the ejs template
+      if (pluginsV1.length == 0) {
+         pluginsV1 = "";
+      } else {
+         pluginsV1 = `"${pluginsV1.map((p) => p.url).join('","')}"`;
+      }
+
+      // @TODO: we still haven't setup a way to assign Plugins to Roles.
+      // So for now we are manually adding ABDesigner.js.
+      // only add if they have 1 of our Builder Related Roles:
+
+      let pluginListV0 = [];
+      // const builderRoles = [
+      //    "6cc04894-a61b-4fb5-b3e5-b8c3f78bd331",
+      //    "e1be4d22-1d00-4c34-b205-ef84b8334b19",
+      // ];
+      // let roles = req.ab.user?.SITE_ROLE ?? [];
+      if (isBuilder) {
+         pluginListV0.push(
             `/assets/tenant/default/ABDesigner.js?v=${webVersion}`
          );
       }
@@ -602,15 +675,15 @@ module.exports = {
             ""
          );
          console.log("Loading HR Teams Plugin");
-         pluginList.push(
+         pluginListV0.push(
             `/assets/tenant/default/HRTeams.js?v=${hrTeamVersion}`
          );
       }
 
-      if (pluginList.length == 0) {
-         pluginList = "";
+      if (pluginListV0.length == 0) {
+         pluginListV0 = "";
       } else {
-         pluginList = `"${pluginList.join('","')}"`;
+         pluginListV0 = `"${pluginListV0.join('","')}"`;
       }
 
       res.type("text/javascript");
@@ -621,7 +694,8 @@ module.exports = {
          configSiteVersion,
          configUserVersion,
          configMyAppsVersion,
-         pluginList,
+         pluginListV0,
+         pluginsV1,
       });
    },
 
@@ -725,6 +799,48 @@ async function lookupMyAppVersion(req) {
       );
    });
    return version;
+}
+
+// async function lookupPlugins(req, cond = {}) {
+//    let plugins = [];
+//    await new Promise((resolve, reject) => {
+//       req.ab.serviceRequest(
+//          "definition_manager.plugins",
+//          { cond },
+//          (err, results) => {
+//             if (err) {
+//                req.ab.log("error:", err);
+//                reject(err);
+//                return;
+//             }
+
+//             plugins = results;
+//             resolve();
+//          }
+//       );
+//    });
+//    return plugins;
+// }
+
+async function lookupPluginLinks(req, cond = {}) {
+   let pluginLinks = [];
+   await new Promise((resolve, reject) => {
+      req.ab.serviceRequest(
+         "definition_manager.plugin-links",
+         { cond },
+         (err, results) => {
+            if (err) {
+               req.ab.log("error:", err);
+               reject(err);
+               return;
+            }
+
+            pluginLinks = results;
+            resolve();
+         }
+      );
+   });
+   return pluginLinks;
 }
 
 async function lookupWebVersion() {
