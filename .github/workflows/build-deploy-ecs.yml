@@ -13,12 +13,18 @@ on:
         type: boolean
         description: Deploy image after building?
         required: true
-        default: 'false'
+        default: "false"
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 jobs:
   # Build and push container image to ECR. Builds occur in the project repository.
   build:
     name: Build
     uses: CruGlobal/.github/.github/workflows/build-ecs.yml@v1
+    with:
+      microservice-app: appbuilder
 
   # Triggers an ECS deployment in https://github.com/CruGlobal/cru-deploy/actions.
   # All deployments happen in the cru-deploy repo.
