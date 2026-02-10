@@ -1,0 +1,8 @@
+# Explicitly control published files (npm otherwise falls back to .gitignore)
+node_modules
+.tmp
+.git
+*.log
+.DS_Store
+.env
+.env.*
