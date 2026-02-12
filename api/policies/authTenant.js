@@ -4,7 +4,6 @@
  */
 
 var hashLookup = {
-   "appbuilder-stage": "admin",
    /* urlPrefix : "tenantID", */
    /* "adroit"  : "adlkfjaldkfjasdlkfj", */
 };
