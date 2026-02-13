@@ -23,8 +23,6 @@ jobs:
   build:
     name: Build
     uses: CruGlobal/.github/.github/workflows/build-ecs.yml@v1
-    with:
-      microservice-app: appbuilder
 
   # Triggers an ECS deployment in https://github.com/CruGlobal/cru-deploy/actions.
   # All deployments happen in the cru-deploy repo.
