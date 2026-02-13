@@ -4,7 +4,7 @@ on:
   push:
     branches:
       # Automatically build master and staging. Additional branches may be added.
-      - master
+      - main
       - staging
   workflow_dispatch:
     # Allows manual build and deploy of any branch/ref
@@ -13,7 +13,11 @@ on:
         type: boolean
         description: Deploy image after building?
         required: true
-        default: 'false'
+        default: "false"
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 jobs:
   # Build and push container image to ECR. Builds occur in the project repository.
   build:
