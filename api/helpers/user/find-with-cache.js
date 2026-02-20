@@ -33,7 +33,7 @@ module.exports = {
                "user_manager.user-find",
                {
                   uuid: userID,
-               }
+               },
             );
 
             commonRequest[key].__count = 0;
@@ -48,7 +48,7 @@ module.exports = {
 
             if (commonRequest[key]) {
                req.ab.log(
-                  `user.resolve -> lookup shared among ${commonRequest[key].__count} requests.`
+                  `user.resolve -> lookup shared among ${commonRequest[key].__count} requests.`,
                );
                // we can remove the Promise now
                delete commonRequest[key];
@@ -57,7 +57,6 @@ module.exports = {
             delete commonRequest[key];
             return exits.error(err);
          }
-
       } else {
          req.ab.log(`user.resolve -> cached user.`);
       }

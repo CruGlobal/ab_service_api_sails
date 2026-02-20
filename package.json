@@ -57,6 +57,7 @@
    "author": "Johnny Hausman",
    "license": "",
    "overrides": {
+      "ajv": "6.14.0",
       "bfj": "9.1.3",
       "lodash": "4.17.23",
       "minimatch": "10.2.1",
