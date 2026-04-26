@@ -106,6 +106,9 @@ module.exports.routes = {
    // multilingual routes
    "/multilingual/label-missing": "appbuilder/label-missing",
 
+   // llm_interface routes
+   "post /llminterface/generatedef": "llm_interface/generate-def",
+
    // log_manager routes:
    "get /app_builder/object/:objID/track": "log_manager/rowlog-find",
 
