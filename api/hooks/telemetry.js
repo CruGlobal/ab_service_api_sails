@@ -3,7 +3,6 @@
  * set up telemetry as soon as sails launches
  */
 
-const Sentry = require("@sentry/node");
 const { version } = require("../../package");
 
 module.exports = function (sails) {
@@ -19,13 +18,8 @@ module.exports = function (sails) {
                   "https://0363fe8e68b2fbd38a807305a3a1212c@o144358.ingest.sentry.io/4505945407488000"
                ),
                release: version,
-               integrations: [
-                  new Sentry.Integrations.Http({ tracing: true }),
-                  new Sentry.Integrations.Express(),
-               ],
             });
          }
       },
    };
 };
-
