@@ -1,6 +1,7 @@
 /**
  * serverError
- * modifies the default sailsjs serverError response to inject the Sentry Error Handler (express middleware)
+ * modifies the default sailsjs serverError response to report the error
+ * through ab-utils telemetry (Sentry).
  * original: https://github.com/balderdashy/sails/blob/3b789f126e7273d83403bfe09ca0c2914e681038/lib/hooks/responses/defaults/serverError.js
  */
 /**
@@ -9,7 +10,7 @@
 
 var _ = require("@sailshq/lodash");
 var flaverr = require("flaverr");
-const Sentry = require("@sentry/node");
+const { telemetry } = require("@digiserve/ab-utils");
 
 /**
  * 500 (Server Error) Response
@@ -29,11 +30,21 @@ module.exports = function serverError(data) {
    // Get access to `req` and `res`
    const req = this.req;
    const res = this.res;
-   if (!sails.config.custom.sentry) return _serverError(data, req, res);
-   Sentry.Handlers.errorHandler()(data, req, res, () =>
-      // Call the default sails response
-      _serverError(data, req, res)
-   );
+   if (sails.config.custom.sentry) {
+      telemetry.notify(
+         req.ab || req,
+         {
+            domain: "developer",
+            info: {
+               tenantID: req.ab?.tenantID,
+               user: req.ab?.user,
+            },
+            error: data,
+         },
+         data
+      );
+   }
+   return _serverError(data, req, res);
 };
 
 // This is the default Sails function (except: pass in req & res rather than read again from this)
