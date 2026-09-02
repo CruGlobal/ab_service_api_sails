@@ -1,0 +1,14 @@
+{
+  "name": "uuid",
+  "version": "11.1.1",
+  "description": "uuid@11 with legacy ./v4 export for @dashersw/node-discover",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./v4": "./v4.js",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "uuid-actual": "npm:uuid@11.1.1"
+  }
+}
