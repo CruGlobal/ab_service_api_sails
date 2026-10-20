@@ -39,6 +39,8 @@ ENV NODE_ENV=production
 
 # Security: run as non-root (base image should provide node user)
 RUN chown -R node:node /app
+RUN mkdir -p node:node /data
+RUN chown -R node:node /data
 USER node
 
 # Entrypoint enables --inspect only when NODE_ENV != production
